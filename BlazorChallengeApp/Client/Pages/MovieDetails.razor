@@ -45,45 +45,45 @@
                             case "Tue":
                                 @foreach (var time in @movie.RunningTimes.Tue)
                                 {
-                                     <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Tuesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Wed":
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                     <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Wednesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Thu":
                                 @foreach (var time in @movie.RunningTimes.Thu)
                                 {
-                                     <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Thursday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Fri":
                                 @foreach (var time in @movie.RunningTimes.Fri)
                                 {
-                                     <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Friday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             
                             case "Sat":
                                 @foreach (var time in @movie.RunningTimes.Sat)
                                 {
-                                     <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Saturday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                             }
                             break;
 
                         case "Sun":
                             @foreach (var time in @movie.RunningTimes.Sun)
                             {
-                                <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                <NavLink href="@($"/MovieBooking/{@movie.Id}/Sunday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                             }
                             break;
                             default:
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                        <NavLink href="#" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                        <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                     }
