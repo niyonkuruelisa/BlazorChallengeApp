@@ -58,18 +58,19 @@ namespace BlazorChallengeApp.Server.Controllers
             }
         }
         // GET: MovieController/Details/5
-        [HttpGet("Details")]
-        public ActionResult Details(int id)
+        [HttpGet("Details/{movieId}")]
+        public ActionResult Details(int movieId)
         {
+            Console.WriteLine("Mo: " + movieId);
             try
             {
-                var movie = _dbContext.Movie.FirstOrDefault(x => x.Id == id);
+
                 var output = new Movie();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                output = (Movie)(from M in _dbContext.Movie
+                output = (from M in _dbContext.Movie
                           join R in _dbContext.RunningTimes
                           on M.RunningTimes.Id equals R.Id
-                          where M.Id == id
+                          where M.Id == movieId
                           select new Movie
                           {
                               Id = M.Id,
@@ -80,14 +81,15 @@ namespace BlazorChallengeApp.Server.Controllers
                               Notes = M.Notes,
                               Year = M.Year,
                               RunningTimes = R,
-                          });
+                          }).ToList().First();
 
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                return Ok(output);   
-            }catch(Exception e)
+                return Ok(output);
+            }
+            catch (Exception e)
             {
 
-                return NotFound("Movie Not Found.");
+                return NotFound("error: " + e.Message);
             }
 
         }

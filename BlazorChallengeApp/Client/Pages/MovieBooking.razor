@@ -1,0 +1,77 @@
+﻿@page "/Moviebooking/{movieId}/{day}/{time}"
+@using System.Text.Json
+@using BlazorChallengeApp.Shared
+@using System.Net.Http.Json
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+<PageTitle>Movie Bookings</PageTitle>
+<div class="text-center">
+    <h1>Cinema Booking</h1>
+</div>
+
+<div class="row ">
+    @if(movie != null)
+    {
+
+            <div class="card mb-5 ml-5 mr-5">
+                <div class="card-header">
+                    <h2>@movie.Title</h2>
+                  </div> 
+              <div class="card-body">
+                <h5 class="card-title">Genre: <b>@movie.Genre</b></h5>
+                <h5 class="card-title">Director: <b>@movie.Director</b></h5>
+                <h5 class="card-title">Cast: <b>@movie.Cast</b></h5>
+                <h5 class="card-title">Year: <b>@movie.Year</b></h5>
+                <p class="card-title">Notes: <b>@movie.Notes</b></p>
+                <button class="btn btn-primary" type="button" disabled>
+                  Day: <b>@day</b> Time:  <b>@time</b>
+                </button>
+              </div>
+            </div>
+            <h2>Choose seats</h2>
+
+    }
+    else
+    {
+        <button class="btn btn-primary" type="button" disabled>
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Loading Movie...
+        </button>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public string movieId { get; set; }  = string.Empty;
+    [Parameter]
+    public string day { get; set; }  = string.Empty;
+    [Parameter]
+    public string time { get; set; }  = string.Empty;
+    private Movie movie;
+    public string? dayTime;
+
+    /// <summary>
+    /// Get Movie details on Initialized.
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        movie = await GetMovieDetails(movieId);
+    }
+
+    private async Task<Movie> GetMovieDetails(string movieId)
+    {
+        return await Http.GetFromJsonAsync<Movie>($"Movie/Details/{movieId}");
+    }
+    /// <summary>
+    /// This method will change Times based on Time.
+    /// </summary>
+    /// <param name="day"></param>
+    private void onDayClick(string day)
+    {
+        
+        dayTime = day;
+
+    }
+}
