@@ -64,7 +64,26 @@ namespace BlazorChallengeApp.Server.Controllers
             try
             {
                 var movie = _dbContext.Movie.FirstOrDefault(x => x.Id == id);
-                return Ok(movie);   
+                var output = new Movie();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                output = (Movie)(from M in _dbContext.Movie
+                          join R in _dbContext.RunningTimes
+                          on M.RunningTimes.Id equals R.Id
+                          where M.Id == id
+                          select new Movie
+                          {
+                              Id = M.Id,
+                              Title = M.Title,
+                              Director = M.Director,
+                              Cast = M.Cast,
+                              Genre = M.Genre,
+                              Notes = M.Notes,
+                              Year = M.Year,
+                              RunningTimes = R,
+                          });
+
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                return Ok(output);   
             }catch(Exception e)
             {
 
