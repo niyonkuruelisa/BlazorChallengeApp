@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Queries\Ticekt\" />
+    <Folder Include="CQRS\Queries\Ticket\" />
   </ItemGroup>
 
 

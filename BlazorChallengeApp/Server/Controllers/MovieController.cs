@@ -48,32 +48,14 @@ namespace BlazorChallengeApp.Server.Controllers
         }
         // GET: MovieController/Details/5
         [HttpGet("Details/{movieId}")]
-        public ActionResult Details(int movieId)
+        public async Task<ActionResult> Details(int movieId)
         {
             
             try
             {
-
-                var output = new Movie();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                output = (from M in _dbContext.Movie
-                          join R in _dbContext.RunningTimes
-                          on M.RunningTimes.Id equals R.Id
-                          where M.Id == movieId
-                          select new Movie
-                          {
-                              Id = M.Id,
-                              Title = M.Title,
-                              Director = M.Director,
-                              Cast = M.Cast,
-                              Genre = M.Genre,
-                              Notes = M.Notes,
-                              Year = M.Year,
-                              RunningTimes = R,
-                          }).ToList().First();
-
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-                return Ok(output);
+                var response = await mediator.Send(new GetMovieById.Query(movieId));
+                var movie = response.Movie;
+                return Ok(movie);
             }
             catch (Exception e)
             {
