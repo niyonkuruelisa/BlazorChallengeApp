@@ -88,6 +88,55 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.ToTable("RunningTimes");
                 });
 
+            modelBuilder.Entity("BlazorChallengeApp.Shared.Ticket", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("_price")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("_ticketName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Ticket");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "3ac73b8d-61ea-44f0-864b-06b20c7aa19d",
+                            _price = 10.0,
+                            _ticketName = "ADULT"
+                        },
+                        new
+                        {
+                            Id = "6039dfc9-2174-49bd-8c75-a5730bb31196",
+                            _price = 10.0,
+                            _ticketName = "CHILD (AGE 14 AND UNDER)"
+                        },
+                        new
+                        {
+                            Id = "8dfad7c7-5133-4ecd-abc1-a18a1852ba34",
+                            _price = 32.0,
+                            _ticketName = "FAMILY X 4(2 AD + 2CH OR 1AD +3 CH)"
+                        },
+                        new
+                        {
+                            Id = "92a7a768-70a8-4a9d-b042-aa66fc04a6e8",
+                            _price = 8.5,
+                            _ticketName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = "3514af3c-2936-46b4-8f52-d9be1e6c846e",
+                            _price = 8.5,
+                            _ticketName = "SENIOR(65 & OVER)"
+                        });
+                });
+
             modelBuilder.Entity("BlazorChallengeApp.Shared.Movie", b =>
                 {
                     b.HasOne("BlazorChallengeApp.Shared.RunningTimes", "RunningTimes")

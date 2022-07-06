@@ -5,37 +5,74 @@
 @using Newtonsoft.Json
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime JsRuntime
 <PageTitle>Movie Bookings</PageTitle>
 <div class="text-center">
     <h1>Cinema Booking</h1>
 </div>
 
 <div class="row ">
-    @if(movie != null)
+    @if (movie != null)
     {
 
-            <div class="card mb-5 ml-5 mr-5">
-                <div class="card-header">
-                    <h2>@movie.Title</h2>
-                  </div> 
-              <div class="card-body">
-                <h5 class="card-title">Genre: <b>@movie.Genre</b></h5>
+        if (!showSeats)
+        {
+                    <div class="card mb-5 ml-5 mr-5">
+            <div class="card-header">
+                <h2>@movie.Title</h2>
+            </div> 
+            <div class="card-body">
+                <h5 class="card-title">Genre:  <b>@movie.Genre</b></h5>
                 <h5 class="card-title">Director: <b>@movie.Director</b></h5>
                 <h5 class="card-title">Cast: <b>@movie.Cast</b></h5>
                 <h5 class="card-title">Year: <b>@movie.Year</b></h5>
                 <p class="card-title">Notes: <b>@movie.Notes</b></p>
                 <button class="btn btn-primary" type="button" disabled>
-                  Day: <b>@day</b> Time:  <b>@time</b>
+                    Day: <b>@day</b> Time:  <b>@time</b>
                 </button>
-              </div>
             </div>
-            <h2>Choose seats</h2>
+        </div>
+        <h2><u>TICKETS ONLY</u></h2>
 
+        <ol class="list-group list-group-numbered">
+            @foreach (var ticket in tickets)
+            {
+
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">@ticket._ticketName</div>
+                        @ConvertToEuro(@ticket._price)
+                    </div>
+                    <div class="qty mt-5 text-center">
+                        <span class="minus bg-dark" @onclick="(() => decreaseByOne(ticket))">-</span>
+                        <input type="number" class="count" id="@ticket.Id" disabled=@InputDisabled name="qty" @bind="ticket._people">
+                        <span class="plus bg-dark" @onclick="(() => increaseByOne(ticket))">+</span>
+                    </div>
+                </li>
+            }
+            </ol>
+        }
+        else
+        {
+            
+        }
+
+
+        <ul type="none" class="list-group " style="list-style-type:none;border:0px;">
+            <li class="list-group-item d-flex justify-content-between align-items-start" >  
+                <div class="ms-2 me-auto">
+                    <button class="btn btn-secondary btn-lg" @onclick="backToBookings" disabled="@backDisabled">Back</button>
+                </div>
+                <div class="qty text-center">
+                    <button class="btn btn-primary btn-lg" @onclick="showSeatsMethod">Proceed</button>
+                </div>
+            </li>
+        </ul>
     }
     else
     {
         <button class="btn btn-primary" type="button" disabled>
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Loading Movie...
         </button>
     }
@@ -51,15 +88,71 @@
     public string time { get; set; }  = string.Empty;
     private Movie movie;
     public string? dayTime;
+    public int TotalSelectedPeople { get; set; } = 0; 
 
+    private List<Ticket> tickets;
+
+    private bool InputDisabled = true;
+    public bool backDisabled { get; set; } = true; 
+    private int inputValue = 0;
+
+    private bool showSeats { get; set; } = false;
+    private void backToBookings()
+    {
+        backDisabled = true;
+        showSeats = false;
+    }
+    private void showSeatsMethod()
+    {
+        backDisabled = false;
+        showSeats = true;
+    }
+    private void increaseByOne(Ticket ticket)
+    {
+
+        if(TotalSelectedPeople < 6)
+        {
+            ticket._people += 1;
+            TotalSelectedPeople += 1;
+        }
+    }
+    private void decreaseByOne(Ticket ticket)
+    {
+        if(TotalSelectedPeople > 0 & ticket._people > 0)
+        {
+            ticket._people -= 1;
+            TotalSelectedPeople -= 1;
+        }
+    }
     /// <summary>
     /// Get Movie details on Initialized.
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
         movie = await GetMovieDetails(movieId);
+        tickets = await GetTickets();
     }
 
+    //Convert money to Euros
+    private string ConvertToEuro(double amount )
+    {
+        return string.Format("€{0:N2}", amount);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param></param>
+    /// <returns></returns>
+    private async Task<List<Ticket>> GetTickets()
+    {
+        return await Http.GetFromJsonAsync<List<Ticket>>($"Ticket/All/");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="movieId"></param>
+    /// <returns></returns>
     private async Task<Movie> GetMovieDetails(string movieId)
     {
         return await Http.GetFromJsonAsync<Movie>($"Movie/Details/{movieId}");

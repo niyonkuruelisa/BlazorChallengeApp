@@ -1,5 +1,7 @@
-﻿using BlazorChallengeApp.Server.DatabaseContext;
+﻿using BlazorChallengeApp.Server.CQRS.Queries.Movie;
+using BlazorChallengeApp.Server.DatabaseContext;
 using BlazorChallengeApp.Shared;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,36 +14,23 @@ namespace BlazorChallengeApp.Server.Controllers
     {
         
         private MovieDbContext _dbContext;
-        public MovieController(MovieDbContext movieDbContext)
+        private IMediator mediator;
+        public MovieController(MovieDbContext movieDbContext,IMediator mediator)
         {
             _dbContext = movieDbContext;
+            this.mediator = mediator;
         }
 
         // GET: MovieController
         [HttpGet]
-        public List<Movie> IndexAsync()
+        public async Task<List<Movie>> IndexAsync()
         {
-            var output = new List<Movie>();
-            #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            output =  (from M in _dbContext.Movie
-                         join R in _dbContext.RunningTimes
-                         on M.RunningTimes.Id equals R.Id
-                         select new Movie{
-                             Id  = M.Id,
-                             Title = M.Title,
-                             Director = M.Director,
-                             Cast = M.Cast,
-                             Genre = M.Genre,
-                             Notes = M.Notes,
-                             Year = M.Year,
-                             RunningTimes  = R,
-                         }).ToList();
+            var response = await mediator.Send(new GetAllMovies.Query());
 
-            #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            return output;
+            return response.Movies;
         }
 
-        // POST: MovieController/All
+        // POST: MovieController/Create
         [HttpPost]
         public ActionResult Create(List<Movie> movies)
         {
@@ -61,7 +50,7 @@ namespace BlazorChallengeApp.Server.Controllers
         [HttpGet("Details/{movieId}")]
         public ActionResult Details(int movieId)
         {
-            Console.WriteLine("Mo: " + movieId);
+            
             try
             {
 
