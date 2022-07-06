@@ -1,4 +1,5 @@
 using BlazorChallengeApp.Server.DatabaseContext;
+using MediatR;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<MovieDbContext>(opt =>
     opt.UseSqlite($"Data Source={nameof(MovieDbContext.Database)}.db"));
+builder.Services.AddMediatR(typeof(Program).Assembly);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
