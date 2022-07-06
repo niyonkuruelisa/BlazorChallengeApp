@@ -29,7 +29,9 @@
                 </button>
               </div>
             </div>
-            <h2>TICKETS ONLY</h2>
+            <h2><u>TICKETS ONLY</u></h2>
+
+
 
     }
     else
@@ -52,14 +54,32 @@
     private Movie movie;
     public string? dayTime;
 
+    private List<Ticket> tickets;
+
     /// <summary>
     /// Get Movie details on Initialized.
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
         movie = await GetMovieDetails(movieId);
+        tickets = await GetTickets();
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param></param>
+    /// <returns></returns>
+    private async Task<List<Ticket>> GetTickets()
+    {
+        return await Http.GetFromJsonAsync<List<Ticket>>($"Ticket/All");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="movieId"></param>
+    /// <returns></returns>
     private async Task<Movie> GetMovieDetails(string movieId)
     {
         return await Http.GetFromJsonAsync<Movie>($"Movie/Details/{movieId}");
