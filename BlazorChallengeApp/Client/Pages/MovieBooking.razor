@@ -5,6 +5,7 @@
 @using Newtonsoft.Json
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+@inject IJSRuntime JsRuntime
 <PageTitle>Movie Bookings</PageTitle>
 <div class="text-center">
     <h1>Cinema Booking</h1>
@@ -30,6 +31,7 @@
               </div>
             </div>
             <h2><u>TICKETS ONLY</u></h2>
+            
             <ol class="list-group list-group-numbered">
               @foreach (var ticket in tickets)
              {
@@ -40,9 +42,9 @@
                        @ConvertToEuro(@ticket._price)
                     </div>
                    <div class="qty mt-5 text-center">
-                        <span class="minus bg-dark" @onclick="decreaseByOne">-</span>
-                        <input type="number" class="count" disabled=@InputDisabled name="qty" @bind-value="@inputValue">
-                        <span class="plus bg-dark" @onclick="increaseByOne">+</span>
+                        <span class="minus bg-dark" @onclick="(() => decreaseByOne(ticket))">-</span>
+                        <input type="number" class="count" id="@ticket.Id" disabled=@InputDisabled name="qty" @bind="ticket._people">
+                        <span class="plus bg-dark" @onclick="(() => increaseByOne(ticket))">+</span>
                     </div>
                   </li>
              }
@@ -57,9 +59,7 @@
     }
 
 </div>
-<style>
 
-</style>
 @code {
     [Parameter]
     public string movieId { get; set; }  = string.Empty;
@@ -69,25 +69,28 @@
     public string time { get; set; }  = string.Empty;
     private Movie movie;
     public string? dayTime;
+    public int TotalSelectedPeople { get; set; } = 0; 
 
     private List<Ticket> tickets;
 
     private bool InputDisabled = true;
     private int inputValue = 0;
 
-    private void increaseByOne()
+    private void increaseByOne(Ticket ticket)
     {
-        
-        if(inputValue < 6)
+
+        if(TotalSelectedPeople < 6)
         {
-            inputValue += 1;
+            ticket._people += 1;
+            TotalSelectedPeople += 1;
         }
     }
-    private void decreaseByOne()
+    private void decreaseByOne(Ticket ticket)
     {
-        if(inputValue > 0)
+        if(TotalSelectedPeople > 0 & ticket._people > 0)
         {
-            inputValue -= 1;
+            ticket._people -= 1;
+            TotalSelectedPeople -= 1;
         }
     }
     /// <summary>
