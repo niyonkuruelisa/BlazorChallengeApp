@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorChallengeApp.Server.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    [Migration("20220705155016_CreatedTickeTable")]
-    partial class CreatedTickeTable
+    [Migration("20220706071734_DatabaseSchema")]
+    partial class DatabaseSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,31 +109,31 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "91544f75-ccf6-46e5-8b18-4ef1c28d1a88",
+                            Id = "3ac73b8d-61ea-44f0-864b-06b20c7aa19d",
                             _price = 10.0,
                             _ticketName = "ADULT"
                         },
                         new
                         {
-                            Id = "052141a7-937b-4301-8010-5fac4b0e1d81",
+                            Id = "6039dfc9-2174-49bd-8c75-a5730bb31196",
                             _price = 10.0,
                             _ticketName = "CHILD (AGE 14 AND UNDER)"
                         },
                         new
                         {
-                            Id = "cc11e7e5-3275-4ff3-b299-d936b404fe22",
+                            Id = "8dfad7c7-5133-4ecd-abc1-a18a1852ba34",
                             _price = 32.0,
                             _ticketName = "FAMILY X 4(2 AD + 2CH OR 1AD +3 CH)"
                         },
                         new
                         {
-                            Id = "26150e08-c37e-4b29-b9e9-37ba6f3550dc",
+                            Id = "92a7a768-70a8-4a9d-b042-aa66fc04a6e8",
                             _price = 8.5,
                             _ticketName = "STUDENT"
                         },
                         new
                         {
-                            Id = "959792a7-2a87-400a-908f-f997d8b45808",
+                            Id = "3514af3c-2936-46b4-8f52-d9be1e6c846e",
                             _price = 8.5,
                             _ticketName = "SENIOR(65 & OVER)"
                         });

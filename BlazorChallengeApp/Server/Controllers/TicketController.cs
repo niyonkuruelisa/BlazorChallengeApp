@@ -13,7 +13,7 @@ namespace BlazorChallengeApp.Server.Controllers
         }
 
         // GET: TicketController
-        [HttpGet("All")]
+        [HttpGet("Ticket/All")]
         public List<Ticket> Index()
         {
             var output = new List<Ticket>();

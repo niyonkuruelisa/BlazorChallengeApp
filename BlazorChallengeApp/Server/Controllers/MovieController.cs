@@ -61,7 +61,7 @@ namespace BlazorChallengeApp.Server.Controllers
         [HttpGet("Details/{movieId}")]
         public ActionResult Details(int movieId)
         {
-            Console.WriteLine("Mo: " + movieId);
+            
             try
             {
 

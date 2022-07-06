@@ -30,9 +30,23 @@
               </div>
             </div>
             <h2><u>TICKETS ONLY</u></h2>
-
-
-
+            <ol class="list-group list-group-numbered">
+              @foreach (var ticket in tickets)
+             {
+                 
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">@ticket._ticketName</div>
+                       @ConvertToEuro(@ticket._price)
+                    </div>
+                   <div class="qty mt-5 text-center">
+                        <span class="minus bg-dark" @onclick="decreaseByOne">-</span>
+                        <input type="number" class="count" disabled=@InputDisabled name="qty" @bind-value="@inputValue">
+                        <span class="plus bg-dark" @onclick="increaseByOne">+</span>
+                    </div>
+                  </li>
+             }
+            </ol>
     }
     else
     {
@@ -43,7 +57,9 @@
     }
 
 </div>
+<style>
 
+</style>
 @code {
     [Parameter]
     public string movieId { get; set; }  = string.Empty;
@@ -56,6 +72,24 @@
 
     private List<Ticket> tickets;
 
+    private bool InputDisabled = true;
+    private int inputValue = 0;
+
+    private void increaseByOne()
+    {
+        
+        if(inputValue < 6)
+        {
+            inputValue += 1;
+        }
+    }
+    private void decreaseByOne()
+    {
+        if(inputValue > 0)
+        {
+            inputValue -= 1;
+        }
+    }
     /// <summary>
     /// Get Movie details on Initialized.
     /// </summary>
@@ -65,6 +99,11 @@
         tickets = await GetTickets();
     }
 
+    //Convert money to Euros
+    private string ConvertToEuro(double amount )
+    {
+        return string.Format("€{0:N2}", amount);
+    }
     /// <summary>
     /// 
     /// </summary>
@@ -72,7 +111,7 @@
     /// <returns></returns>
     private async Task<List<Ticket>> GetTickets()
     {
-        return await Http.GetFromJsonAsync<List<Ticket>>($"Ticket/All");
+        return await Http.GetFromJsonAsync<List<Ticket>>($"Ticket/All/");
     }
 
     /// <summary>
