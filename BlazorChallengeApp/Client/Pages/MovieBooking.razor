@@ -33,7 +33,9 @@
             </div>
         </div>
         <h2><u>TICKETS ONLY</u></h2>
-
+        <div class="alert alert-@errorType" style="display:@showError;">
+          <strong>Oops!</strong> @errorMessage;
+        </div>
         <ol class="list-group list-group-numbered">
             @foreach (var ticket in tickets)
             {
@@ -97,6 +99,9 @@
     private int inputValue = 0;
 
     private bool showSeats { get; set; } = false;
+    private string errorType { get; set; } = "info";
+    private string showError { get; set; } = "None";
+    private string errorMessage { get; set; } = string.Empty;
     private void backToBookings()
     {
         backDisabled = true;
@@ -110,10 +115,21 @@
     private void increaseByOne(Ticket ticket)
     {
 
-        if(TotalSelectedPeople < 6)
+        if (TotalSelectedPeople < 6)
         {
-            ticket._people += 1;
-            TotalSelectedPeople += 1;
+            var adult = tickets.Find(adult => adult._ticketName == "ADULT" && adult._people > 0);
+            if(adult == null && ticket._ticketName.Contains("CHILD"))
+            {
+                errorType = "danger";
+                showError = "inline-block";
+                errorMessage = "Select at least 1 Adult before selecting a Child.";
+            }
+            else
+            {
+                showError = "none";
+                ticket._people += 1;
+                TotalSelectedPeople += 1;
+            }
         }
     }
     private void decreaseByOne(Ticket ticket)
@@ -122,6 +138,18 @@
         {
             ticket._people -= 1;
             TotalSelectedPeople -= 1;
+            // When adult removed let's reset child's number too
+            if (ticket._ticketName == "ADULT" && ticket._people == 0)
+            {
+                var child = tickets.Find(child => child._ticketName.Contains("CHILD") && child._people > 0);
+                if(child != null)
+                {
+                    TotalSelectedPeople = TotalSelectedPeople - child._people;
+                    child._people = 0;
+
+                    //tickets.Find(adult => adult._ticketName.Contains("CHILD") && adult._people > 0)._people = 0;
+                }
+            }
         }
     }
     /// <summary>
