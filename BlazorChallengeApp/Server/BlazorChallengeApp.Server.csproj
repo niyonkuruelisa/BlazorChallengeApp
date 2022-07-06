@@ -21,9 +21,5 @@
     <ProjectReference Include="..\Shared\BlazorChallengeApp.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CQRS\Queries\Ticket\" />
-  </ItemGroup>
-
 
 </Project>

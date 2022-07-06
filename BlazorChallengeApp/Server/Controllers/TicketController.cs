@@ -1,28 +1,26 @@
-﻿using BlazorChallengeApp.Server.DatabaseContext;
+﻿using BlazorChallengeApp.Server.CQRS.Queries.Ticket;
 using BlazorChallengeApp.Shared;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorChallengeApp.Server.Controllers
 {
     public class TicketController
     {
-        private MovieDbContext _dbContext;
-        public TicketController(MovieDbContext movieDbContext)
+        private IMediator mediator;
+
+        public TicketController(IMediator mediator)
         {
-            _dbContext = movieDbContext;
+            this.mediator = mediator;
         }
 
         // GET: TicketController
         [HttpGet("Ticket/All")]
-        public List<Ticket> Index()
+        public async Task<List<Ticket>> Index()
         {
-            var output = new List<Ticket>();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            output = (from T in _dbContext.Ticket
-                      select T).ToList();
-
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            return output;
+            var response = await mediator.Send(new GetAllTickets.Query());
+            List<Ticket> result = response.Tickets;
+            return result;
         }
     }
 }
