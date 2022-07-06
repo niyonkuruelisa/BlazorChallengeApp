@@ -6,7 +6,11 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
 {
     public static class GetAllMovies
     {
-        // Data to execute
+
+
+        /// <summary>
+        ///Data to execute
+        /// </summary>
         public record Query() : IRequest<Response>;
 
         // Handler
@@ -19,10 +23,15 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
                 this.movieDbContext = movieDbContext;
             }
 
+            /// <summary>
+            /// Handle All business logic. Get Movie And It's assiated Days And Time.
+            /// </summary>
+            /// <param name="request"></param>
+            /// <param name="cancellationToken"></param>
+            /// <returns></returns>
             public async Task<Response>? Handle(Query request, CancellationToken cancellationToken)
             {
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 var output = (from M in movieDbContext.Movie
                               join R in movieDbContext.RunningTimes
                               on M.RunningTimes.Id equals R.Id
@@ -39,22 +48,13 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
                               }).ToList();
 
                 return new Response(output) ?? null;
-
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
         }
 
         /// <summary>
-        /// Reponse data
+        /// Return All Movies
         /// </summary>
-        /// <param name="Id"></param>
-        /// <param name="Title"></param>
-        /// <param name="Director"></param>
-        /// <param name="Cast"></param>
-        /// <param name="Genre"></param>
-        /// <param name="Notes"></param>
-        /// <param name="Year"></param>
-        /// <param name="RunningTimes"></param>
+        /// <param name="Movies"></param>
         
         public record Response(List<Shared.Movie> Movies);
     }
