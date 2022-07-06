@@ -1,4 +1,5 @@
-﻿using BlazorChallengeApp.Server.CQRS.Queries.Movie;
+﻿using BlazorChallengeApp.Server.CQRS.Commands.Movie;
+using BlazorChallengeApp.Server.CQRS.Queries.Movie;
 using BlazorChallengeApp.Server.DatabaseContext;
 using BlazorChallengeApp.Shared;
 using MediatR;
@@ -12,12 +13,9 @@ namespace BlazorChallengeApp.Server.Controllers
     [Route("[controller]")]
     public class MovieController : ControllerBase
     {
-        
-        private MovieDbContext _dbContext;
         private IMediator mediator;
-        public MovieController(MovieDbContext movieDbContext,IMediator mediator)
+        public MovieController(IMediator mediator)
         {
-            _dbContext = movieDbContext;
             this.mediator = mediator;
         }
 
@@ -32,14 +30,14 @@ namespace BlazorChallengeApp.Server.Controllers
 
         // POST: MovieController/Create
         [HttpPost]
-        public ActionResult Create(List<Movie> movies)
+        public async Task<ActionResult> Create(List<Movie> movies)
         {
 
             try
             {
-                _dbContext.Movie.AddRange(movies.Where(x => !_dbContext.Movie.Any(y => y.Id == x.Id)));
-                _dbContext.SaveChanges();
-                return Ok();
+                var response = await mediator.Send(new CreateMovies.Command(movies));
+
+                return Ok(response.saved);
             }
             catch
             {
