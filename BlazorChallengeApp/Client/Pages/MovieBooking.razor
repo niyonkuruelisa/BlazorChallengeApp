@@ -7,6 +7,76 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject IJSRuntime JsRuntime
 <PageTitle>Movie Bookings</PageTitle>
+<style>
+    .seat {
+  background-color:cadetblue;
+  height: 12px;
+  width: 15px;
+  margin: 3px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+    }
+
+    .seat.selected {
+      background-color: coral;
+    }
+
+    .seat.occupied {
+      background-color: #444451;
+    }
+  .showcase .seat:not(.occupied):hover {
+  cursor: default;
+  transform: scale(1);
+}
+
+.seat:nth-of-type(5) {
+  margin-right: 48px;
+}
+.seat:not(.occupied):hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.showcase .seat:not(.occupied):hover {
+  cursor: default;
+  transform: scale(1);
+}
+.showcase {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #777;
+  list-style-type: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.showcase li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+}
+
+.showcase li small {
+  margin-left: 10px;
+}
+.row {
+  display: flex;
+}
+.container {
+  perspective: 1000px;
+  margin-bottom: 30px;
+}
+p.text {
+  margin: 5px 0;
+}
+
+p.text span {
+    
+  color: coral;
+}
+</style>
 <div class="text-center">
     <h1>Cinema Booking</h1>
 </div>
@@ -14,10 +84,7 @@
 <div class="row ">
     @if (movie != null)
     {
-
-        if (!showSeats)
-        {
-                    <div class="card mb-5 ml-5 mr-5">
+        <div class="card mb-5 ml-5 mr-5">
             <div class="card-header">
                 <h2>@movie.Title</h2>
             </div> 
@@ -32,6 +99,9 @@
                 </button>
             </div>
         </div>
+        if (!showSeats)
+        {
+
         <h2><u>TICKETS ONLY</u></h2>
         <div class="alert alert-@errorType" style="display:@showError;">
           <strong>Oops!</strong> @errorMessage;
@@ -56,23 +126,70 @@
         }
         else
         {
-            
+            <div class="text-center">
+                <h5>Select your seats by moving your mouse over the seating plan.
+                    Pink seats represent your current selection.
+                    Green seats are available to be selected.
+                    You may select any seat block which changes the seat colour to <span style="height:10px;width:10px;background-color:coral;color:coral;border-radius:5px;">H</span>
+                    </h5>
+                    <div className="container w-75 text-center border mt-4">
+				        <h2>Screen</h2>
+			        </div>
+			        <div className="container w-75 text-center border">
+				        <h2>Front Row</h2>
+			        </div>
+                    <ul class="showcase">
+                      <li>
+                        <div class="seat"></div>
+                        <small>N/A</small>
+                      </li>
+
+                      <li>
+                        <div class="seat selected"></div>
+                        <small>Selected</small>
+                      </li>
+
+                      <li>
+                        <div class="seat occupied"></div>
+                        <small>Occupied</small>
+                      </li>
+                    </ul>
+                    <div class="container text-center">
+                        @for(int row =0;row<10;row++)
+                            {
+                                
+                                <div class="row text-center">
+                                @for(int column =0;column< 10;column++)
+                                {
+                                    var col = row;
+                                    var rw = column;
+                                    <div class="seat @seats[row,column].state" @onclick="@(e => selectedSeat(col,rw))"></div>
+                                }
+                                </div>
+                            }
+                        
+                    <p class="text">
+                          You have selected <span id="count"><b>@selectedSeats.Count</b></span> of Total seats<span id="total"><b>@TotalSelectedPeople</b></span>
+                        </p>
+                    </div>
+
+            </div>
         }
 
-
-        <ul type="none" class="list-group " style="list-style-type:none;border:0px;">
+        <ul type="none" class="list-group mt-5 mb-5" style="list-style-type:none;border:0px;">
             <li class="list-group-item d-flex justify-content-between align-items-start" >  
                 <div class="ms-2 me-auto">
                     <button class="btn btn-secondary btn-lg" @onclick="backToBookings" disabled="@backDisabled">Back</button>
                 </div>
                 <div class="qty text-center">
-                    <button class="btn btn-primary btn-lg" @onclick="showSeatsMethod">Proceed</button>
+                    <button class="btn btn-primary btn-lg" disabled="@freezProcess" @onclick="showSeatsMethod">Proceed</button>
                 </div>
             </li>
         </ul>
     }
     else
     {
+        
         <button class="btn btn-primary" type="button" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Loading Movie...
@@ -82,6 +199,13 @@
 </div>
 
 @code {
+    // Deal with seats
+
+    Seat[,] seats = new Seat[10,10];
+    List<Seat> selectedSeats = new List<Seat>();
+
+    // Deal with movie object
+
     [Parameter]
     public string movieId { get; set; }  = string.Empty;
     [Parameter]
@@ -90,18 +214,58 @@
     public string time { get; set; }  = string.Empty;
     private Movie movie;
     public string? dayTime;
-    public int TotalSelectedPeople { get; set; } = 0; 
+    public int TotalSelectedPeople { get; set; } = 0;
+    public Seat loopSeat { get; set; }
 
-    private List<Ticket> tickets;
+    //Deal with seat matrix
+    int[] row = Array.Empty<int>();
 
+    //Deal with Navigations
     private bool InputDisabled = true;
     public bool backDisabled { get; set; } = true; 
+    public bool freezProcess { get; set; } = true; 
     private int inputValue = 0;
 
     private bool showSeats { get; set; } = false;
+
+    //deal with errors
     private string errorType { get; set; } = "info";
     private string showError { get; set; } = "None";
     private string errorMessage { get; set; } = string.Empty;
+
+
+
+    private List<Ticket> tickets;
+
+
+    /// <summary>
+    /// Get Movie details on Initialized.
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+
+        movie = await GetMovieDetails(movieId);
+        tickets = await GetTickets();
+        createBookings();
+    }
+    public class Seat
+    {
+        public string id { get; set; }
+        public int row { get; set; }
+        public int column { get; set; }
+
+        public string state { get; set; } = "n/a";
+
+    }
+
+    private void clicked()
+    {
+        Console.WriteLine("Working");
+    }
+    private bool GoodToGo()
+    {
+        return true;
+    }
     private void backToBookings()
     {
         backDisabled = true;
@@ -112,6 +276,7 @@
         backDisabled = false;
         showSeats = true;
     }
+
     private void increaseByOne(Ticket ticket)
     {
 
@@ -131,6 +296,8 @@
                 TotalSelectedPeople += 1;
             }
         }
+
+        freez();
     }
     private void decreaseByOne(Ticket ticket)
     {
@@ -151,15 +318,73 @@
                 }
             }
         }
+
+        freez();
+
     }
-    /// <summary>
-    /// Get Movie details on Initialized.
-    /// </summary>
-    protected override async Task OnInitializedAsync()
+
+    // Freez process
+    private void freez()
     {
-        movie = await GetMovieDetails(movieId);
-        tickets = await GetTickets();
+        if(TotalSelectedPeople > 0)
+        {
+            freezProcess = false;
+        }
+        else
+        {
+            freezProcess = true;
+        }
     }
+
+    private void selectedSeat(int row,int column)
+    {
+        Seat seat = seats[row, column];
+        //get selected list;
+
+        //check if selected seats match people who has been selected in bookings.
+       
+            
+            showError = "none";
+            switch (seat.state)
+            {
+                case "selected":
+                    seat.state = "n/a";
+                    selectedSeats.Remove(seat);
+                    break;
+
+                case "n/a":
+                        if (selectedSeats.Count <  TotalSelectedPeople)
+                        {
+                            seat.state = "selected";
+                            selectedSeats.Add(seat);
+                        
+                        }else
+                        {
+                            //if try to select more than allowed seats, DENY.
+                            errorType = "danger";
+                            showError = "inline-block";
+                            errorMessage = "You Have to select seats that match with Tickets selected.";
+                        }
+                break;
+                    
+            }
+
+
+
+    }
+    private void createBookings()
+    {
+
+        for(int row = 0; row <10; row++)
+        {
+            for(int column = 0; column<10;column++)
+            {
+                
+                seats[row,column] = new Seat { id = Guid.NewGuid().ToString(), row = row, column = column };
+            }
+        }
+    }
+
 
     //Convert money to Euros
     private string ConvertToEuro(double amount )
