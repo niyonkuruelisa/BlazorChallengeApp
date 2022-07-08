@@ -2,10 +2,11 @@
 @using System.Text.Json
 @using BlazorChallengeApp.Shared
 @using System.Net.Http.Json
+@using Microsoft.Extensions.Logging
 @using Newtonsoft.Json
 @inject HttpClient Http
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
-@inject IJSRuntime JsRuntime
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManagerging
+@inject ILogger<Booking> Logger
 <PageTitle>Movie Bookings</PageTitle>
 <style>
     .seat {
@@ -76,6 +77,13 @@ p.text span {
     
   color: coral;
 }
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
 </style>
 <div class="text-center">
     <h1>Cinema Booking</h1>
@@ -127,7 +135,31 @@ p.text span {
         }
         else if (showBookUserInfo)
         {
-            
+            <section>
+              <div class="container py-5 h-100">
+                <div class="row d-flex align-items-center justify-content-center">
+                  <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+                    <EditForm Model="@bookingModel" OnValidSubmit="@HandleValidSubmit">
+                      <DataAnnotationsValidator/>
+                      <ValidationSummary />
+                      <!-- Name input -->
+                      <div class="form-outline mb-4">
+                        <InputText @bind-Value="bookingModel.Name" id="nameInput" class="form-control form-control-lg" />
+                        <label class="form-label" for="nameInput">Name</label>
+                      </div>
+                      <!-- Email input -->
+                      <div class="form-outline mb-4">
+                        <InputText @bind-Value="bookingModel.Email" id="emailInput" class="form-control form-control-lg" />
+                        <label class="form-label" for="emailInput">Email address</label>
+                      </div>
+                      <!-- Submit button -->
+                      <button type="submit" class="btn btn-success btn-lg btn-block">Book Now</button>
+
+                    </EditForm>
+                  </div>
+                </div>
+              </div>
+            </section>
         }else{
             <div class="text-center">
                 <h5>Select your seats by moving your mouse over the seating plan.
@@ -187,12 +219,8 @@ p.text span {
                 @if ((selectedSeats.Count == TotalSelectedPeople && selectedSeats.Count > 0))
                 {
                     <div class="qty text-center">
-                    <button class="btn btn-primary btn-lg" disabled="@freezProcess" @onclick="DisplayBookUserInfo">Proceed To Payment</button>
+                        <button class="btn btn-primary btn-lg" style="display:@processButtonShown;" disabled="@freezProcess" @onclick="DisplayBookUserInfo">Proceed To Payment</button>
                     </div>
-                }
-                else if (showBookUserInfo)
-                {
-                    
                 }else
                 {
                     <div class="qty text-center">
@@ -243,6 +271,7 @@ p.text span {
 
     private bool showSeats { get; set; } = false;
     private bool showBookUserInfo { get; set; } = false;
+    private string processButtonShown { get; set; } = "inline-block";
 
     //deal with errors
     private string errorType { get; set; } = "info";
@@ -254,6 +283,20 @@ p.text span {
     private List<Ticket> tickets;
 
 
+
+    private Booking bookingModel = new();
+
+    private void HandleValidSubmit()
+    {
+        Logger.LogInformation("HandleValidSubmit called");
+        // Process the valid form
+        bookingModel.seats = selectedSeats;
+        bookingModel.movieId = movie.Id;
+        bookingModel.day = day;
+        bookingModel.time = time;
+
+    }
+
     /// <summary>
     /// Get Movie details on Initialized.
     /// </summary>
@@ -264,15 +307,7 @@ p.text span {
         tickets = await GetTickets();
 
     }
-    public class Seat
-    {
-        public string id { get; set; }
-        public int row { get; set; }
-        public int column { get; set; }
 
-        public string state { get; set; } = "n/a";
-
-    }
 
     private void clicked()
     {
@@ -289,6 +324,7 @@ p.text span {
         {
             showBookUserInfo = false;
             backDisabled = false;
+            processButtonShown = "inline-block";
             showSeats = true;
 
         }
@@ -311,6 +347,7 @@ p.text span {
     {
         backDisabled = false;
         showBookUserInfo = true;
+        processButtonShown = "none";
         createBookings();
     }
 

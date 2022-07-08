@@ -20,6 +20,8 @@ namespace BlazorChallengeApp.Server.DatabaseContext
         public DbSet<Movie> Movie { get; set; }
         public DbSet<RunningTimes> RunningTimes { get; set; }
         public DbSet<Ticket> Ticket { get; set; }
+        public DbSet<Seat> Seat { get; set; }
+        public DbSet<Booking> Booking { get; set; }
         #endregion
 
         #region Overidden methods
