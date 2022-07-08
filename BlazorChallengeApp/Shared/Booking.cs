@@ -11,7 +11,7 @@ namespace BlazorChallengeApp.Shared
     {
         public string? Id { get; set; }
         [Required]
-        [RegularExpression(@"^[\p{L}]+$",ErrorMessage ="Accepted Only Alphabet characters.")]
+        [RegularExpression(@"^[a-zA-Z]+[ a-zA-Z]*$", ErrorMessage ="Accepted Only Alphabet characters.")]
         public string Name { get; set; } = string.Empty;
         [Required]
         [EmailAddress(ErrorMessage = "Invalid Email Address.")]
