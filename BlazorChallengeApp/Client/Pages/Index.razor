@@ -41,56 +41,56 @@
                 <p class="card-title">Notes: <b>@movie.Notes</b></p>
 
                 <div class="alert alert-secondary mt-4">
-                        @switch (dayTime)
+                         @switch (dayTime)
                         {
                             case "Mon":
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Tue":
                                 @foreach (var time in @movie.RunningTimes.Tue)
                                 {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Tuesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Wed":
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Wednesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Thu":
                                 @foreach (var time in @movie.RunningTimes.Thu)
                                 {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
+                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Thursday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             case "Fri":
                                 @foreach (var time in @movie.RunningTimes.Fri)
                                 {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Friday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             
                             case "Sat":
                                 @foreach (var time in @movie.RunningTimes.Sat)
                                 {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
-                                }
+                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Saturday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                            }
                             break;
-                            
-                            case "Sun":
-                                @foreach (var time in @movie.RunningTimes.Sun)
-                                {
-                                     <a href="#" class="btn btn-primary btn-time m-2">@time</a>
-                                }
+
+                        case "Sun":
+                            @foreach (var time in @movie.RunningTimes.Sun)
+                            {
+                                <NavLink href="@($"/MovieBooking/{@movie.Id}/Sunday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                            }
                             break;
                             default:
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                        <a href="#" class="btn btn-primary btn-time m-2">@time</a>
+                                        <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                     }
