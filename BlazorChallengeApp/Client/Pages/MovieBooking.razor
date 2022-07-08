@@ -286,7 +286,7 @@ background: #eee;
 
     private Booking bookingModel = new();
 
-    private void HandleValidSubmit()
+    private async void HandleValidSubmit()
     {
         Logger.LogInformation("HandleValidSubmit called");
         // Process the valid form
@@ -294,7 +294,8 @@ background: #eee;
         bookingModel.movieId = movie.Id;
         bookingModel.day = day;
         bookingModel.time = time;
-
+        var saved = await Http.PostAsJsonAsync<Booking>($"Booking",bookingModel);
+        Console.WriteLine(saved.Content);
     }
 
     /// <summary>
