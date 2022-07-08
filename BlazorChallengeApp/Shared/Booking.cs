@@ -20,6 +20,6 @@ namespace BlazorChallengeApp.Shared
         public string? day { get; set; }
         public string? time { get; set; }
         public int? movieId { get; set; }
-        public List<Seat> seats { get; set; }
+        public List<Seat>? seats { get; set; }
     }
 }
