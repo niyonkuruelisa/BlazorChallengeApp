@@ -1,13 +1,15 @@
-﻿@page "/Admin/movies"
+﻿@page "/Admin/Cinema/Movies/{cinemaID}"
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @using BlazorChallengeApp.Shared
 @inject HttpClient Http
-<h3>Movie Management</h3>
+<h3>@cinema.Name</h3>
 <div class="row">
 
     @*Start movie column*@
     <div class="col">
       
-        <h3>All Movies</h3>
         @if (movies.Any())
         {
             <div class="alert alert-secondary mt-4">
@@ -167,11 +169,14 @@
   </div>
 @code {
     // Get All Movies
+    [Parameter]
+    public string? cinemaID { get; set; }
     private HttpRequestMessage? httpRequestMessage;
     private HttpResponseMessage? httpResponseMessage;
     private HttpClient? client;
 
     List<Movie>? movies = new List<Movie>();
+    Cinema? cinema = new Cinema();
     List<Booking>? bookings = new List<Booking>();
     public string? dayTime = "Monday";
     List<Seat>? seats = new List<Seat>();
@@ -182,7 +187,10 @@
     protected override async Task OnInitializedAsync()
     {
         //Load movies first if they are available
-        movies = await Http.GetFromJsonAsync<List<Movie>>($"Movie/All");
+        this.cinemaID = cinemaID;
+        cinema = await Http.GetFromJsonAsync<Cinema>($"Cinema?id={cinemaID}");
+        //Load movies first if they are available
+        movies = await Http.GetFromJsonAsync<List<Movie>>($"Movie?cinemaId={cinemaID}");
     }
 
     private async Task ShowMovieBookings(int? movieId,string time)
@@ -191,7 +199,7 @@
         isMovieDetailsAvailable = true;
         seats = new List<Seat>();
         // Get Bookings By Movie ID
-        bookings = await Http.GetFromJsonAsync<List<Booking>>($"Booking?movieID={movieId}&day={dayTime}&time={time}");
+        bookings = await Http.GetFromJsonAsync<List<Booking>>($"Booking/Cinema?cinemaID={cinemaID}&movieID={movieId}&day={dayTime}&time={time}");
         if (bookings.Any())
         {
             foreach(var booking in bookings)
