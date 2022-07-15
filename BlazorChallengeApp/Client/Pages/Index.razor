@@ -14,101 +14,21 @@
 </div>
 
 <div class="row ">
-    @if(movies.Any())
-    {
-        <div class="alert alert-secondary mt-4">
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Mon"))'>Monday</button>
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Tue"))'>Tuesday</button>
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Wed"))'>Wednesday</button>
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Thu"))'>Thursday</button>
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Fri"))'>Friday</button>
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Sat"))'>Saturday</button>
-           <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Sun"))'>Sunday</button>
-        </div>
-        @foreach(var movie in movies)
-        {
-            <div class="card mb-5 ml-5 mr-5">
-                <NavLink href="@($"/MovieDetails/{@movie.Id}")" Match="NavLinkMatch.All">
-                  <div class="card-header">
-                    <h2>@movie.Title</h2>
-                  </div> 
-               </NavLink>
-              <div class="card-body">
-                <h5 class="card-img"><svg class="bd-placeholder-img img-thumbnail" width="200" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera: 200x200" preserveAspectRatio="xMidYMid slice" focusable="false"><title>A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">200x200</text></svg></h5>
-                <h5 class="card-title">Genre: <b>@movie.Genre</b></h5>
-                <h5 class="card-title">Director: <b>@movie.Director</b></h5>
-                <h5 class="card-title">Cast: <b>@movie.Cast</b></h5>
-                <h5 class="card-title">Year: <b>@movie.Year</b></h5>
-                <p class="card-title">Notes: <b>@movie.Notes</b></p>
+    @if(cinemas.Any()){
 
-                <div class="alert alert-secondary mt-4">
-                         @switch (dayTime)
-                        {
-                            case "Mon":
-                                @foreach (var time in @movie.RunningTimes.Mon)
-                                {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-
-                            case "Tue":
-                                @foreach (var time in @movie.RunningTimes.Tue)
-                                {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Tuesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-
-                            case "Wed":
-                                @foreach (var time in @movie.RunningTimes.Mon)
-                                {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Wednesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-
-                            case "Thu":
-                                @foreach (var time in @movie.RunningTimes.Thu)
-                                {
-                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Thursday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-
-                            case "Fri":
-                                @foreach (var time in @movie.RunningTimes.Fri)
-                                {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Friday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-                            
-                            case "Sat":
-                                @foreach (var time in @movie.RunningTimes.Sat)
-                                {
-                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Saturday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-
-                            case "Sun":
-                                @foreach (var time in @movie.RunningTimes.Sun)
-                                {
-                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Sunday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-
-                            default:
-                                @foreach (var time in @movie.RunningTimes.Mon)
-                                {
-                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                                }
-                            break;
-                    }
-                   
-                </div>
-
-              </div>
+    
+        @foreach(var cinema in cinemas)
+            {
+            <div class="card m-2" style="width: 18rem;">
+                <NavLink class="nav-link" href="@($"/Cinema/{cinema.Id.ToString()}")" Match="NavLinkMatch.All">
+                    <svg class="bd-placeholder-img img-thumbnail" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera: 200x200" preserveAspectRatio="xMidYMid slice" focusable="false"><title>A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">200x200</text></svg>
+                    <div class="card-body">
+                    <h5>@cinema.Name</h5>
+                    </div>
+                </NavLink>
             </div>
         }
-
-    }
-    else
+    }else
     {
         <button class="btn btn-primary" type="button" disabled>
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -123,21 +43,20 @@
     private HttpRequestMessage? httpRequestMessage;
     private HttpResponseMessage? httpResponseMessage;
     private HttpClient? client;
-    private string dayOfWeek = System.DateTime.Now.DayOfWeek.ToString();
 
+    List<Cinema>? cinemas = new List<Cinema>();
     List<Movie>? movies = new List<Movie>();
-    List<Movie>? ApiMovies = new List<Movie>();
-    public string? dayTime;
 
     /// <summary>
     /// This Method will consume Api and Save Data to database then retrive Data back to UI.
     /// </summary>
     /// <returns></returns>
-    
+
     protected override async Task OnInitializedAsync()
     {
-        //Load movies first if they are available
-        movies = await Http.GetFromJsonAsync<List<Movie>>("Movie");
+        //get all cinemas
+        cinemas = await Http.GetFromJsonAsync<List<Cinema>>("Cinema/All");
+
 
         //Console.WriteLine(movies.First().RunningTimes);
         //If there is no movie we have to add new movies
@@ -152,9 +71,7 @@
             httpResponseMessage = await client.SendAsync(httpRequestMessage);
             movies = JsonConvert.DeserializeObject<List<Movie>>(await httpResponseMessage.Content.ReadAsStringAsync());
 
-            await Http.PostAsJsonAsync("Movie", movies);
-
-            movies = await Http.GetFromJsonAsync<List<Movie>>("Movie");
+            await Http.PostAsJsonAsync("Cinema", movies);
         }
         catch (Exception e)
         {
@@ -163,19 +80,6 @@
 
 
     }
-    private void ViewMovieDetails(string MovieId)
-    {
-        navigationManager.NavigateTo($"/MovieDetails/{MovieId}");
-    }
-    /// <summary>
-    /// This method will change Times based on Time.
-    /// </summary>
-    /// <param name="day"></param>
-    private void onDayClick(string day)
-    {
-        
-        dayTime = day;
 
-    }
 
 }

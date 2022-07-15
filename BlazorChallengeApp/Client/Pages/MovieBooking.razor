@@ -1,11 +1,11 @@
-﻿@page "/Moviebooking/{movieId}/{day}/{time}"
+﻿@page "/Moviebooking/{cinemaID}/{movieId}/{day}/{time}"
 @using System.Text.Json
 @using BlazorChallengeApp.Shared
 @using System.Net.Http.Json
 @using Microsoft.Extensions.Logging
 @using Newtonsoft.Json
 @inject HttpClient Http
-@inject Microsoft.AspNetCore.Components.NavigationManager navigationManagerging
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
 @inject ILogger<Booking> Logger
 <PageTitle>Movie Bookings</PageTitle>
 <style>
@@ -255,6 +255,8 @@ background: #eee;
     public string day { get; set; }  = string.Empty;
     [Parameter]
     public string time { get; set; }  = string.Empty;
+    [Parameter]
+    public string cinemaID { get; set; }  = string.Empty;
     private Movie movie;
     public string? dayTime;
     public int TotalSelectedPeople { get; set; } = 0;
@@ -286,16 +288,26 @@ background: #eee;
 
     private Booking bookingModel = new();
 
-    private async void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
         Logger.LogInformation("HandleValidSubmit called");
         // Process the valid form
         bookingModel.seats = selectedSeats;
-        bookingModel.movieId = movie.Id;
-        bookingModel.day = day;
-        bookingModel.time = time;
-        var saved = await Http.PostAsJsonAsync<Booking>($"Booking",bookingModel);
-        Console.WriteLine(saved.Content);
+        bookingModel.MovieId = movie.Id;
+        bookingModel.Day = day;
+        bookingModel.Time = time;
+        var saved = await Http.PostAsJsonAsync<Booking>($"Booking",new Booking
+                {
+                    Name = bookingModel.Name,
+                    Email = bookingModel.Email,
+                    Day = bookingModel.Day,
+                    Time = bookingModel.Time,
+                    MovieId = bookingModel.MovieId,
+                    CinemaId = int.Parse(cinemaID),
+                    seats = selectedSeats
+                });
+        backDisabled = true;
+        navigationManager.NavigateTo($"/");
     }
 
     /// <summary>
@@ -309,11 +321,6 @@ background: #eee;
 
     }
 
-
-    private void clicked()
-    {
-        Console.WriteLine("Working");
-    }
     private bool GoodToGo()
     {
         return true;
@@ -327,6 +334,7 @@ background: #eee;
             backDisabled = false;
             processButtonShown = "inline-block";
             showSeats = true;
+            
 
         }
         else
@@ -338,18 +346,20 @@ background: #eee;
         }
 
     }
-    private void showSeatsMethod()
+    private async Task showSeatsMethod()
     {
         backDisabled = false;
         showSeats = true;
-        createBookings();
+        await createBookings();
     }
-    private void DisplayBookUserInfo()
+
+    private async Task DisplayBookUserInfo()
     {
         backDisabled = false;
         showBookUserInfo = true;
         processButtonShown = "none";
-        createBookings();
+        await createBookings();
+
     }
 
 
@@ -422,11 +432,11 @@ background: #eee;
         switch (seat.state)
         {
             case "selected":
-                seat.state = "n/a";
+                seat.state = "N/A";
                 selectedSeats.Remove(seat);
                 break;
 
-            case "n/a":
+            case "N/A":
                 if (selectedSeats.Count <  TotalSelectedPeople)
                 {
                     seat.state = "selected";
@@ -438,39 +448,67 @@ background: #eee;
 
 
     }
-    private void createBookings()
+
+    private async Task createBookings()
     {
+
         // Reset selected Seats
-        if(selectedSeats.Count< 1)
+        if(TotalSelectedPeople > 0)
         {
-            int localPeopleSelected = TotalSelectedPeople;
             for(int row = 0; row <10; row++)
             {
                 for(int column = 0; column<10;column++)
                 {
-
-                    if (localPeopleSelected > 0)
-                    {
-                        seats[row, column] = new Seat { id = Guid.NewGuid().ToString(), row = row, column = column,state = "selected" };
-                        selectedSeats.Add(seats[row, column]);
-                        localPeopleSelected--;
-                        //check if 2D space exist if exist skip it.
-
-                    }
-                    else
-                    {
-                        seats[row,column] = new Seat { id = Guid.NewGuid().ToString(), row = row, column = column };
-                        //check if 2D space exist if exist skip it.
-                    }
+                    seats[row, column] = new Seat { id = Guid.NewGuid().ToString(), row = row, column = column,state = "N/A" };
 
                 }
             }
+
+        }
+        //Add Occupied Seats
+        List<Seat>? occupiedSeats = new List<Seat>();
+        occupiedSeats = await Http.GetFromJsonAsync<List<Seat>>($"Seat/All?cinemaId={cinemaID}&movieId={movieId}&day={day}&time={time}");
+        foreach (var occupiedSeat in occupiedSeats)
+        {
+            seats[occupiedSeat.row, occupiedSeat.column] = new Seat { id = occupiedSeat.id, row = occupiedSeat.row, column = occupiedSeat.column,state = "occupied" };
+        }
+        int localPeopleSelected = TotalSelectedPeople;
+        //First clear All Selected Seats
+        if (selectedSeats.Count > 0)
+        {
+            if (selectedSeats.Count> 0)
+            {
+                 
+            }
+        }
+        else
+        {
+            foreach (var seat in selectedSeats)
+                {
+                    seats[seat.row, seat.column].state = "N/A";
+
+                }
         }
 
+        //Add Selected seats
+        for(int row = 0; row <10; row++)
+        {
+            for(int column = 0; column<10;column++)
+            {
 
+                //check if 2D space exist if exist skip it.
+                if (localPeopleSelected > 0 && seats[row, column].state == "N/A")
+                {
+                    seats[row,column] = new Seat { id = Guid.NewGuid().ToString(),row = row, column =column, state = "selected" };
+                    selectedSeats.Add(seats[row,column]);
+                    localPeopleSelected--;
+                }
+
+
+            }
+        }
 
     }
-
     //Convert money to Euros
     private string ConvertToEuro(double amount )
     {

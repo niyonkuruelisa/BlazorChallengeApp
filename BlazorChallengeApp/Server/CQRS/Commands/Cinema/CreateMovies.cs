@@ -1,7 +1,7 @@
 ﻿using BlazorChallengeApp.Server.DatabaseContext;
 using MediatR;
 
-namespace BlazorChallengeApp.Server.CQRS.Commands.Movie
+namespace BlazorChallengeApp.Server.CQRS.Commands.Cinema
 {
     public static class CreateMovies
     {
@@ -15,7 +15,7 @@ namespace BlazorChallengeApp.Server.CQRS.Commands.Movie
             MovieDbContext _movieDbContext;
             public Handler(MovieDbContext movieDbContext)
             {
-                this._movieDbContext = movieDbContext;
+                _movieDbContext = movieDbContext;
             }
 
             /// <summary>
@@ -26,7 +26,24 @@ namespace BlazorChallengeApp.Server.CQRS.Commands.Movie
             /// <returns></returns>
             public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
             {
+                //Save movie first
                 _movieDbContext.Movie.AddRange(request.Movies.Where(x => !_movieDbContext.Movie.Any(y => y.Id == x.Id)));
+                _movieDbContext.SaveChanges();
+
+                // Allocate all movies to all cinemas
+                List<Shared.Movie> movies = (from M in _movieDbContext.Movie select M).ToList();
+                List<Shared.Cinema> cinemas = (from C in _movieDbContext.Cinema select C).ToList();
+                foreach (var movie in movies)
+                {
+                    foreach(var cinema in cinemas)
+                    {
+                        if (!_movieDbContext.MovieCinema.Any(c => c.Movie == movie && c.Cinema == cinema))
+                        {
+                            _movieDbContext.MovieCinema.Add(new Shared.MovieCinema { Cinema = cinema,Movie = movie});
+                        }
+                        
+                    }
+                }
                 _movieDbContext.SaveChanges();
                 return new Response(true);
             }

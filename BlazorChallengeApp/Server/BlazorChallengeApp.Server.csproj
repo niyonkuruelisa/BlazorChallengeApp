@@ -21,5 +21,9 @@
     <ProjectReference Include="..\Shared\BlazorChallengeApp.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Commands\Movie\" />
+  </ItemGroup>
+
 
 </Project>

@@ -3,6 +3,7 @@ using System;
 using BlazorChallengeApp.Server.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorChallengeApp.Server.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    partial class MovieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220712145343_ChangedToGUID")]
+    partial class ChangedToGUID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
@@ -23,78 +25,26 @@ namespace BlazorChallengeApp.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("CinemaId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Day")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("MovieId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Time")
-                        .IsRequired()
+                    b.Property<string>("day")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("movieId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("time")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Booking");
-                });
-
-            modelBuilder.Entity("BlazorChallengeApp.Shared.Cinema", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Cinema");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Blue Cinema Kigali"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Red Olympia Kigali"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Yellow Cinema Ireland"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Green Olympia France"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "White Cinema UK"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Black Olympia USA"
-                        });
                 });
 
             modelBuilder.Entity("BlazorChallengeApp.Shared.Movie", b =>
@@ -136,27 +86,6 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.ToTable("Movie");
                 });
 
-            modelBuilder.Entity("BlazorChallengeApp.Shared.MovieCinema", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CinemaId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("CinemaId");
-
-                    b.HasIndex("MovieId");
-
-                    b.ToTable("MovieCinema");
-                });
-
             modelBuilder.Entity("BlazorChallengeApp.Shared.RunningTimes", b =>
                 {
                     b.Property<int?>("Id")
@@ -194,7 +123,11 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.Property<string>("id")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("BookingId")
+                    b.Property<string>("BookingId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("BookingId1")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("column")
@@ -209,7 +142,7 @@ namespace BlazorChallengeApp.Server.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("BookingId");
+                    b.HasIndex("BookingId1");
 
                     b.ToTable("Seat");
                 });
@@ -233,31 +166,31 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "96b9b790-f67b-4244-ac3a-6cd5932179c1",
+                            Id = "25f2b95b-5b5d-4458-8e1f-3c8c1623a47f",
                             _price = 10.0,
                             _ticketName = "ADULT"
                         },
                         new
                         {
-                            Id = "489f1d68-ef0c-4039-9d91-a809a0d426a1",
+                            Id = "4f8c1c2b-9c0e-48e9-a6f5-4d4a7f082f13",
                             _price = 10.0,
                             _ticketName = "CHILD (AGE 14 AND UNDER)"
                         },
                         new
                         {
-                            Id = "7ff9590f-831b-43f2-8c1e-fe9a20517920",
+                            Id = "0e5be183-21e7-480c-81a8-2cd1aa085fda",
                             _price = 32.0,
                             _ticketName = "FAMILY X 4(2 AD + 2CH OR 1AD +3 CH)"
                         },
                         new
                         {
-                            Id = "3b205213-3145-415b-8fc9-b90f010b3d50",
+                            Id = "50bdfc3f-c240-4e44-b668-1ade98e10c06",
                             _price = 8.5,
                             _ticketName = "STUDENT"
                         },
                         new
                         {
-                            Id = "b7888c6f-8fb6-440d-b964-29ecef134f38",
+                            Id = "054082f3-5a14-4434-8370-6e39533a0245",
                             _price = 8.5,
                             _ticketName = "SENIOR(65 & OVER)"
                         });
@@ -272,30 +205,11 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.Navigation("RunningTimes");
                 });
 
-            modelBuilder.Entity("BlazorChallengeApp.Shared.MovieCinema", b =>
-                {
-                    b.HasOne("BlazorChallengeApp.Shared.Cinema", "Cinema")
-                        .WithMany()
-                        .HasForeignKey("CinemaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlazorChallengeApp.Shared.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cinema");
-
-                    b.Navigation("Movie");
-                });
-
             modelBuilder.Entity("BlazorChallengeApp.Shared.Seat", b =>
                 {
                     b.HasOne("BlazorChallengeApp.Shared.Booking", null)
                         .WithMany("seats")
-                        .HasForeignKey("BookingId");
+                        .HasForeignKey("BookingId1");
                 });
 
             modelBuilder.Entity("BlazorChallengeApp.Shared.Booking", b =>

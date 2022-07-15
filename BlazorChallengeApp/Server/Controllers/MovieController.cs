@@ -1,4 +1,4 @@
-﻿using BlazorChallengeApp.Server.CQRS.Commands.Movie;
+﻿using BlazorChallengeApp.Server.CQRS.Queries.Cinema;
 using BlazorChallengeApp.Server.CQRS.Queries.Movie;
 using BlazorChallengeApp.Server.DatabaseContext;
 using BlazorChallengeApp.Shared;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BlazorChallengeApp.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("Movie")]
     public class MovieController : ControllerBase
     {
         private IMediator mediator;
@@ -21,28 +21,12 @@ namespace BlazorChallengeApp.Server.Controllers
 
         // GET: MovieController
         [HttpGet]
-        public async Task<List<Movie>> IndexAsync()
+        public async Task<List<Movie>> IndexAsync(int cinemaId)
         {
-            var response = await mediator.Send(new GetAllMovies.Query());
+
+            var response = await mediator.Send(new GetAllMovies.Query(cinemaId));
 
             return response.Movies;
-        }
-
-        // POST: MovieController/Create
-        [HttpPost]
-        public async Task<ActionResult> Create(List<Movie> movies)
-        {
-
-            try
-            {
-                var response = await mediator.Send(new CreateMovies.Command(movies));
-
-                return Ok(response.saved);
-            }
-            catch
-            {
-                return NotFound("Can't save Movies...");
-            }
         }
         // GET: MovieController/Details/5
         [HttpGet("Details/{movieId}")]

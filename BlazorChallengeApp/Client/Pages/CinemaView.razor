@@ -1,17 +1,23 @@
-﻿@page "/MovieDetails/{cinemaId}/{movieId}"
+﻿@page "/Cinema/{cinemaID}"
 @using System.Text.Json
 @using BlazorChallengeApp.Shared
 @using System.Net.Http.Json
 @using Newtonsoft.Json
 @inject HttpClient Http
 @inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
-<PageTitle>Movie Detail</PageTitle>
+@using BlazorChallengeApp.Shared
+
+@if(cinema != null){
+    <h3>@cinema.Name</h3>
+}
+
+<PageTitle>Movie List</PageTitle>
 <div class="text-center">
-    <h1>Cinema Booking</h1>
+    <h3>Book Your Seat Now!!</h3>
 </div>
 
-<div class="row ">
-    @if(movie != null)
+<div class="row">
+    @if(movies.Any())
     {
         <div class="alert alert-secondary mt-4">
            <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Mon"))'>Monday</button>
@@ -22,11 +28,16 @@
            <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Sat"))'>Saturday</button>
            <button class="btn btn-primary btn-time m-2" @onclick='(() => onDayClick("Sun"))'>Sunday</button>
         </div>
+        @foreach(var movie in movies)
+        {
             <div class="card mb-5 ml-5 mr-5">
-                <div class="card-header">
+                <NavLink href="@($"/MovieDetails/{@cinema.Id}/{@movie.Id}")" Match="NavLinkMatch.All">
+                  <div class="card-header">
                     <h2>@movie.Title</h2>
                   </div> 
+               </NavLink>
               <div class="card-body">
+                <h5 class="card-img"><svg class="bd-placeholder-img img-thumbnail" width="200" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera: 200x200" preserveAspectRatio="xMidYMid slice" focusable="false"><title>A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">200x200</text></svg></h5>
                 <h5 class="card-title">Genre: <b>@movie.Genre</b></h5>
                 <h5 class="card-title">Director: <b>@movie.Director</b></h5>
                 <h5 class="card-title">Cast: <b>@movie.Cast</b></h5>
@@ -34,56 +45,61 @@
                 <p class="card-title">Notes: <b>@movie.Notes</b></p>
 
                 <div class="alert alert-secondary mt-4">
-                        @switch (dayTime)
+                         @switch (dayTime)
                         {
                             case "Mon":
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
+
                             case "Tue":
                                 @foreach (var time in @movie.RunningTimes.Tue)
                                 {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Tuesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Tuesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
+
                             case "Wed":
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Wednesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Wednesday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
+
                             case "Thu":
                                 @foreach (var time in @movie.RunningTimes.Thu)
                                 {
-                                    <NavLink href="@($"/MovieBooking/{@movie.Id}/Thursday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                    <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Thursday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
+
                             case "Fri":
                                 @foreach (var time in @movie.RunningTimes.Fri)
                                 {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Friday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                     <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Friday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                             
                             case "Sat":
                                 @foreach (var time in @movie.RunningTimes.Sat)
                                 {
-                                     <NavLink href="@($"/MovieBooking/{@movie.Id}/Saturday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                            }
+                                    <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Saturday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                }
                             break;
 
-                        case "Sun":
-                            @foreach (var time in @movie.RunningTimes.Sun)
-                            {
-                                <NavLink href="@($"/MovieBooking/{@movie.Id}/Sunday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
-                            }
+                            case "Sun":
+                                @foreach (var time in @movie.RunningTimes.Sun)
+                                {
+                                    <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Sunday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                }
                             break;
+
                             default:
                                 @foreach (var time in @movie.RunningTimes.Mon)
                                 {
-                                        <NavLink href="@($"/MovieBooking/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
+                                    <NavLink href="@($"/MovieBooking/{@cinema.Id}/{@movie.Id}/Monday/{@time}")" class="btn btn-primary btn-time m-2">@time</NavLink>
                                 }
                             break;
                     }
@@ -92,7 +108,7 @@
 
               </div>
             </div>
-        
+        }
 
     }
     else
@@ -102,27 +118,30 @@
           Loading Movies...
         </button>
     }
-
-</div>
-
+    </div>
 @code {
     [Parameter]
-    public string movieId { get; set; }  = string.Empty;
-    public string cinemaId { get; set; }  = string.Empty;
-    private Movie movie;
-    public string? dayTime;
+    public string cinemaID { get; set; }
+    private Cinema cinema;
+    private HttpRequestMessage? httpRequestMessage;
+    private HttpResponseMessage? httpResponseMessage;
+    private HttpClient? client;
+    private string dayOfWeek = System.DateTime.Now.DayOfWeek.ToString();
 
-    /// <summary>
-    /// Get Movie details on Initialized.
-    /// </summary>
+    List<Cinema>? cinemas = new List<Cinema>();
+    List<Movie>? movies = new List<Movie>();
+    List<Movie>? ApiMovies = new List<Movie>();
+    public string? dayTime;
     protected override async Task OnInitializedAsync()
     {
-        movie = await GetMovieDetails(movieId);
+        this.cinemaID = cinemaID;
+        cinema = await Http.GetFromJsonAsync<Cinema>($"Cinema?id={cinemaID}");
+        //Load movies first if they are available
+        movies = await Http.GetFromJsonAsync<List<Movie>>($"Movie?cinemaId={cinemaID}");
     }
-
-    private async Task<Movie> GetMovieDetails(string movieId)
+        private void ViewMovieDetails(string MovieId)
     {
-        return await Http.GetFromJsonAsync<Movie>($"Movie/Details/{movieId}");
+        navigationManager.NavigateTo($"/MovieDetails/{MovieId}");
     }
     /// <summary>
     /// This method will change Times based on Time.

@@ -17,6 +17,8 @@ namespace BlazorChallengeApp.Server.DatabaseContext
         #endregion
 
         #region Public properties
+        public DbSet<Cinema> Cinema { get; set; }
+        public DbSet<MovieCinema> MovieCinema { get; set; }
         public DbSet<Movie> Movie { get; set; }
         public DbSet<RunningTimes> RunningTimes { get; set; }
         public DbSet<Ticket> Ticket { get; set; }
@@ -33,7 +35,7 @@ namespace BlazorChallengeApp.Server.DatabaseContext
                 c => c.ToList());
 
             // Populate Tickets on creationg of the database
-
+            modelBuilder.Entity<Cinema>().HasData(GetCinemas());
             modelBuilder.Entity<Ticket>().HasData(GetTickets());
 
             modelBuilder.Entity<RunningTimes>().Property(p => p.Mon)
@@ -64,7 +66,20 @@ namespace BlazorChallengeApp.Server.DatabaseContext
         #endregion
 
         #region Private methods
-        private List<Ticket> GetTickets()
+        private List<Cinema> GetCinemas()
+        {
+            return new List<Cinema>
+            {
+                new Cinema { Id = 1, Name = "Blue Cinema Kigali"},
+                new Cinema { Id = 2, Name = "Red Olympia Kigali"},
+                new Cinema { Id = 3, Name = "Yellow Cinema Ireland"},
+                new Cinema { Id = 4, Name = "Green Olympia France"},
+                new Cinema { Id = 5, Name = "White Cinema UK"},
+                new Cinema { Id = 6, Name = "Black Olympia USA"},
+            };
+            }
+
+            private List<Ticket> GetTickets()
         {
             return new List<Ticket>
             {

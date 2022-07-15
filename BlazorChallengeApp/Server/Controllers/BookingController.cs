@@ -2,36 +2,35 @@
 using BlazorChallengeApp.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorChallengeApp.Server.Controllers
 {
-
-    [Route("[controller]")]
-    public class BookingContoller: ControllerBase
+    public class BookingController : Controller
     {
         IMediator mediator;
-        public BookingContoller(IMediator mediator)
+        public BookingController(IMediator mediator)
         {
             this.mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task<ActionResult> create(Booking booking)
+        [HttpPost("Booking")]
+        public async Task<bool> create([FromBody] Booking booking)
         {
-            try
+
+             try
             {
 
                 //Save Booking
                 var response = await mediator.Send(new CreateBooking.Command(booking));
 
-                return Ok(response.Saved);
+                return response.Saved;
             }
-            catch(Exception e)
+            catch  (Exception ex)
             {
-
-                return NotFound("Something Happened.");
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
-
     }
 }

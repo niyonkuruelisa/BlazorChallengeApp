@@ -1,4 +1,5 @@
 ﻿using BlazorChallengeApp.Server.DatabaseContext;
+using BlazorChallengeApp.Shared;
 using MediatR;
 using System.Linq;
 
@@ -18,9 +19,10 @@ namespace BlazorChallengeApp.Server.CQRS.Commands.Booking
             }
             public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
             {
-                Console.WriteLine("Here");
+                
                 // Saving Booking to database;
-                movieDbContext.Add(movieDbContext.Booking.Where(booking => booking.Name != request.Booking.Name && booking.Email != request.Booking.Email));
+                movieDbContext.Booking.Add(request.Booking);
+                // Saving Seats to database;
                 movieDbContext.SaveChanges();
 
                 return new Response(true);

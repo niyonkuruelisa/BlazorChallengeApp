@@ -3,6 +3,7 @@ using System;
 using BlazorChallengeApp.Server.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorChallengeApp.Server.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    partial class MovieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220714132753_AddedMigration141522")]
+    partial class AddedMigration141522
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
@@ -22,9 +24,6 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("CinemaId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Day")
                         .IsRequired()
@@ -68,32 +67,32 @@ namespace BlazorChallengeApp.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Blue Cinema Kigali"
+                            Name = "Centry Cinema Kigali"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Red Olympia Kigali"
+                            Name = "Canal Olympia Kigali"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Yellow Cinema Ireland"
+                            Name = "Centry Cinema Ireland"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Green Olympia France"
+                            Name = "Canal Olympia France"
                         },
                         new
                         {
                             Id = 5,
-                            Name = "White Cinema UK"
+                            Name = "Centry Cinema UK"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Black Olympia USA"
+                            Name = "Canal Olympia USA"
                         });
                 });
 
@@ -233,31 +232,31 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "96b9b790-f67b-4244-ac3a-6cd5932179c1",
+                            Id = "d82dc5d5-8027-4bc4-ba28-6d9a6a7bf8b9",
                             _price = 10.0,
                             _ticketName = "ADULT"
                         },
                         new
                         {
-                            Id = "489f1d68-ef0c-4039-9d91-a809a0d426a1",
+                            Id = "e136d421-5ab0-4277-a3b7-93b1392b9617",
                             _price = 10.0,
                             _ticketName = "CHILD (AGE 14 AND UNDER)"
                         },
                         new
                         {
-                            Id = "7ff9590f-831b-43f2-8c1e-fe9a20517920",
+                            Id = "54fe4bfe-9fb8-44ae-9e10-0e150e748868",
                             _price = 32.0,
                             _ticketName = "FAMILY X 4(2 AD + 2CH OR 1AD +3 CH)"
                         },
                         new
                         {
-                            Id = "3b205213-3145-415b-8fc9-b90f010b3d50",
+                            Id = "9f7c45ef-0603-4e90-98ce-a86cc1f2ae0c",
                             _price = 8.5,
                             _ticketName = "STUDENT"
                         },
                         new
                         {
-                            Id = "b7888c6f-8fb6-440d-b964-29ecef134f38",
+                            Id = "4df27a81-219e-400a-82b7-25ffaf7c1a81",
                             _price = 8.5,
                             _ticketName = "SENIOR(65 & OVER)"
                         });

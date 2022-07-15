@@ -3,6 +3,7 @@ using System;
 using BlazorChallengeApp.Server.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorChallengeApp.Server.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    partial class MovieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220714141645_AddedMigration141622")]
+    partial class AddedMigration141622
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
@@ -22,9 +24,6 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("CinemaId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Day")
                         .IsRequired()
@@ -233,31 +232,31 @@ namespace BlazorChallengeApp.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "96b9b790-f67b-4244-ac3a-6cd5932179c1",
+                            Id = "51934294-a56e-4f9b-a8b8-62fe4ff3f375",
                             _price = 10.0,
                             _ticketName = "ADULT"
                         },
                         new
                         {
-                            Id = "489f1d68-ef0c-4039-9d91-a809a0d426a1",
+                            Id = "703f6e1f-1a4b-4bd7-8f34-6918553a84f1",
                             _price = 10.0,
                             _ticketName = "CHILD (AGE 14 AND UNDER)"
                         },
                         new
                         {
-                            Id = "7ff9590f-831b-43f2-8c1e-fe9a20517920",
+                            Id = "87430d84-aff0-46c3-b879-4c95c74028dd",
                             _price = 32.0,
                             _ticketName = "FAMILY X 4(2 AD + 2CH OR 1AD +3 CH)"
                         },
                         new
                         {
-                            Id = "3b205213-3145-415b-8fc9-b90f010b3d50",
+                            Id = "bdf906d1-b4b0-45b1-a6a0-d971108e37e5",
                             _price = 8.5,
                             _ticketName = "STUDENT"
                         },
                         new
                         {
-                            Id = "b7888c6f-8fb6-440d-b964-29ecef134f38",
+                            Id = "17313a30-c0ea-4f2e-a338-7fc7a5f165f4",
                             _price = 8.5,
                             _ticketName = "SENIOR(65 & OVER)"
                         });
