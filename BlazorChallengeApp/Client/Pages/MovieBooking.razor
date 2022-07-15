@@ -280,17 +280,13 @@ background: #eee;
     private string showError { get; set; } = "None";
     private string errorMessage { get; set; } = string.Empty;
 
-
-
     private List<Ticket> tickets;
-
-
 
     private Booking bookingModel = new();
 
     private async Task HandleValidSubmit()
     {
-        Logger.LogInformation("HandleValidSubmit called");
+        Logger.LogInformation(selectedSeats.Count.ToString());
         // Process the valid form
         bookingModel.seats = selectedSeats;
         bookingModel.MovieId = movie.Id;
@@ -321,10 +317,6 @@ background: #eee;
 
     }
 
-    private bool GoodToGo()
-    {
-        return true;
-    }
     private void backToBookings()
     {
 
@@ -334,7 +326,7 @@ background: #eee;
             backDisabled = false;
             processButtonShown = "inline-block";
             showSeats = true;
-            
+
 
         }
         else
@@ -353,12 +345,11 @@ background: #eee;
         await createBookings();
     }
 
-    private async Task DisplayBookUserInfo()
+    private void DisplayBookUserInfo()
     {
         backDisabled = false;
         showBookUserInfo = true;
         processButtonShown = "none";
-        await createBookings();
 
     }
 
@@ -446,7 +437,6 @@ background: #eee;
                 break;
         }
 
-
     }
 
     private async Task createBookings()
@@ -478,16 +468,16 @@ background: #eee;
         {
             if (selectedSeats.Count> 0)
             {
-                 
+
             }
         }
         else
         {
             foreach (var seat in selectedSeats)
-                {
-                    seats[seat.row, seat.column].state = "N/A";
+            {
+                seats[seat.row, seat.column].state = "N/A";
 
-                }
+            }
         }
 
         //Add Selected seats
@@ -503,10 +493,9 @@ background: #eee;
                     selectedSeats.Add(seats[row,column]);
                     localPeopleSelected--;
                 }
-
-
             }
         }
+        Logger.LogInformation(selectedSeats.Count + "");
 
     }
     //Convert money to Euros
