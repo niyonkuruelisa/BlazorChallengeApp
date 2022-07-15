@@ -14,6 +14,25 @@ namespace BlazorChallengeApp.Server.Controllers
         {
             this.mediator = mediator;
         }
+        // get bookings by cinema and movie Ids
+        [Route("Booking/Cinema/")]
+        [HttpGet]
+        public async Task<List<Booking>> GetAllBooKingsByMovie(int cinemaID, int? movieId, string day, string time)
+        {
+            Console.WriteLine("From Controller");
+            try
+            {
+                //Save Booking
+                var response = await mediator.Send(new GetAllBooKingsByCinemaMovie.Query(cinemaID, movieId, day, time));
+
+                return response.Bookings;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
         [HttpGet("Booking")]
         public async Task<List<Booking>> GetAllBooKingsByMovie(int? movieId,string day,string time)
         {
