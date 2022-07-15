@@ -1,14 +1,14 @@
 ﻿using BlazorChallengeApp.Server.DatabaseContext;
 using MediatR;
 
-namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
+namespace BlazorChallengeApp.Server.CQRS.Queries.Booking
 {
-    public class GetAllMovies
+    public class GetAllBooKingsByMovie
     {
         /// <summary>
         ///Data to execute
         /// </summary>
-        public record Query() : IRequest<Response>;
+        public record Query(int? movieId,string day, string time) : IRequest<Response>;
 
         // Handler
         public class Handler : IRequestHandler<Query, Response>
@@ -28,22 +28,24 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
             /// <returns></returns>
             public async Task<Response>? Handle(Query request, CancellationToken cancellationToken)
             {
-                var output = (from M in movieDbContext.Movie
-                              join R in movieDbContext.RunningTimes
-                              on M.RunningTimes.Id equals R.Id
-                              select new Shared.Movie
+                var output = (from B in movieDbContext.Booking
+                              
+                              where B.MovieId == request.movieId
+                              && B.Day == request.day
+                              && B.Time == request.time
+                              select new Shared.Booking
                               {
-                                  Id = M.Id,
-                                  Title = M.Title,
-                                  Director = M.Director,
-                                  Cast = M.Cast,
-                                  Genre = M.Genre,
-                                  Notes = M.Notes,
-                                  Year = M.Year,
-                                  RunningTimes = R,
+                                Id = B.Id,
+                                Name = B.Name,
+                                Email = B.Email,
+                                Day = B.Day,
+                                Time = B.Time,
+                                MovieId = B.MovieId,
+                                CinemaId = B.CinemaId,
+                                seats = B.seats,
                               }).ToList();
 
-                return new Response(Movies: output) ?? null;
+                return new Response(Bookings: output) ?? null;
             }
         }
 
@@ -52,6 +54,6 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
         /// </summary>
         /// <param name="Movies"></param>
 
-        public record Response(List<Shared.Movie> Movies);
+        public record Response(List<Shared.Booking> Bookings);
     }
 }

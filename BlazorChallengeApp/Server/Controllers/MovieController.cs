@@ -18,13 +18,21 @@ namespace BlazorChallengeApp.Server.Controllers
         {
             this.mediator = mediator;
         }
+        // GET: MovieController / Get all Movies
+        [HttpGet("All")]
+        public async Task<List<Movie>> GetAllMoviesAsync()
+        {
 
-        // GET: MovieController
+            var response = await mediator.Send(new GetAllMovies.Query());
+
+            return response.Movies;
+        }
+        // GET: MovieController / Get Movie By Cinema ID
         [HttpGet]
         public async Task<List<Movie>> IndexAsync(int cinemaId)
         {
 
-            var response = await mediator.Send(new GetAllMovies.Query(cinemaId));
+            var response = await mediator.Send(new GetAllMoviesByCinemaId.Query(cinemaId));
 
             return response.Movies;
         }

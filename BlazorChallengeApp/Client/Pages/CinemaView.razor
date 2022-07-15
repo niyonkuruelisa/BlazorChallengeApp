@@ -31,7 +31,7 @@
         @foreach(var movie in movies)
         {
             <div class="card mb-5 ml-5 mr-5">
-                <NavLink href="@($"/MovieDetails/{@cinema.Id}/{@movie.Id}")" Match="NavLinkMatch.All">
+                <NavLink href="@($"/MovieDetails/{cinema.Id}/{@movie.Id}")" Match="NavLinkMatch.All">
                   <div class="card-header">
                     <h2>@movie.Title</h2>
                   </div> 

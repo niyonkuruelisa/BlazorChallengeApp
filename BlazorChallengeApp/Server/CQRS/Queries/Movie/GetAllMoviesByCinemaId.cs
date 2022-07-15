@@ -1,14 +1,17 @@
 ﻿using BlazorChallengeApp.Server.DatabaseContext;
+using BlazorChallengeApp.Shared;
 using MediatR;
 
 namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
 {
-    public class GetAllMovies
+    public static class GetAllMoviesByCinemaId
     {
+
+
         /// <summary>
         ///Data to execute
         /// </summary>
-        public record Query() : IRequest<Response>;
+        public record Query(int cinemaID) : IRequest<Response>;
 
         // Handler
         public class Handler : IRequestHandler<Query, Response>
@@ -28,9 +31,14 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
             /// <returns></returns>
             public async Task<Response>? Handle(Query request, CancellationToken cancellationToken)
             {
+                var cinema = (from C in movieDbContext.Cinema where C.Id == request.cinemaID select C).FirstOrDefault();
+                
                 var output = (from M in movieDbContext.Movie
                               join R in movieDbContext.RunningTimes
                               on M.RunningTimes.Id equals R.Id
+                              join CM in movieDbContext.MovieCinema on
+                              M equals CM.Movie
+                              where CM.Cinema == cinema
                               select new Shared.Movie
                               {
                                   Id = M.Id,
@@ -51,7 +59,8 @@ namespace BlazorChallengeApp.Server.CQRS.Queries.Movie
         /// Return All Movies
         /// </summary>
         /// <param name="Movies"></param>
-
+        
         public record Response(List<Shared.Movie> Movies);
     }
 }
+

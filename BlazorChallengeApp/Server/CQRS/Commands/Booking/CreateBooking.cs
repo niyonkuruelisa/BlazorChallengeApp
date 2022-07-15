@@ -19,11 +19,26 @@ namespace BlazorChallengeApp.Server.CQRS.Commands.Booking
             }
             public async Task<Response> Handle(Command request, CancellationToken cancellationToken)
             {
-                
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
+                Console.WriteLine("Here => "+request.Booking.seats.Count);
                 // Saving Booking to database;
-                movieDbContext.Booking.Add(request.Booking);
-                // Saving Seats to database;
-                movieDbContext.SaveChanges();
+                if (!movieDbContext.Booking.Any(b => b == request.Booking))
+                {
+                    movieDbContext.Booking.Add(request.Booking);
+                    // Saving Seats to database;
+                    movieDbContext.SaveChanges();
+                }
 
                 return new Response(true);
             }
